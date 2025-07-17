@@ -17,7 +17,7 @@ steps:
       buildkite-agent artifact upload "vulnerability-report.json"
     
     plugins:
-      - StacklokLabs/toolhive#v0.0.1:
+      - StacklokLabs/toolhive#main:
           server: "osv"
           transport: "sse"
           proxy-port: 8080
@@ -49,7 +49,7 @@ steps:
       buildkite-agent artifact upload "security-report.txt"
     
     plugins:
-      - StacklokLabs/toolhive#v0.0.1:
+      - StacklokLabs/toolhive#main:
           server: "osv"
           transport: "sse"
           proxy-port: 8081
@@ -73,7 +73,7 @@ steps:
         --fail-on-vulnerabilities
     
     plugins:
-      - StacklokLabs/toolhive#v0.0.1:
+      - StacklokLabs/toolhive#main:
           server: "osv"
           transport: "sse"
           proxy-port: 8082
@@ -94,7 +94,7 @@ steps:
         --output-format text
     
     plugins:
-      - StacklokLabs/toolhive#v0.0.1:
+      - StacklokLabs/toolhive#main:
           server: "osv"
           transport: "sse"
           proxy-port: 8083
@@ -111,7 +111,7 @@ steps:
         --output-format text
     
     plugins:
-      - StacklokLabs/toolhive#v0.0.1:
+      - StacklokLabs/toolhive#main:
           server: "osv"
           transport: "sse"
           proxy-port: 8084
@@ -129,7 +129,7 @@ steps:
         --severity-threshold medium
     
     plugins:
-      - StacklokLabs/toolhive#v0.0.1:
+      - StacklokLabs/toolhive#main:
           server: "osv"
           transport: "sse"
           proxy-port: 8085
