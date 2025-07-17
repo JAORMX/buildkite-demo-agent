@@ -57,7 +57,7 @@ class OSVAgent:
             self.osv_server = MCPServerSSE(f"{config.osv_server_url}/sse")
         
         # Create the model
-        model = AnthropicModel('claude-3-5-sonnet-20241022', api_key=api_key)
+        model = AnthropicModel('claude-3-5-sonnet-20241022')
         
         # Create the agent with OSV MCP tools
         self.agent = Agent(
