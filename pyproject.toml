@@ -1,0 +1,22 @@
+[project]
+name = "buildkite-demo-agent"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Juan Antonio Osorio", email = "ozz@stacklok.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "httpx>=0.28.1",
+    "pydantic>=2.11.7",
+    "pydantic-ai[anthropic,mcp]>=0.4.3",
+    "python-dotenv>=1.1.1",
+]
+
+[project.scripts]
+buildkite-demo-agent = "buildkite_demo_agent:cli"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

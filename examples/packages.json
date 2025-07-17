@@ -1,0 +1,17 @@
+[
+  {
+    "package_name": "requests",
+    "ecosystem": "PyPI",
+    "version": "2.25.0"
+  },
+  {
+    "package_name": "lodash",
+    "ecosystem": "npm",
+    "version": "4.17.20"
+  },
+  {
+    "package_name": "github.com/gin-gonic/gin",
+    "ecosystem": "Go",
+    "version": "v1.7.0"
+  }
+]

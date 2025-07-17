@@ -1,0 +1,138 @@
+steps:
+  - label: "🔍 OSV Vulnerability Scan"
+    key: "vulnerability-scan"
+    command: |
+      echo "--- Setting up environment"
+      uv sync
+      
+      echo "--- Running vulnerability scan"
+      uv run buildkite-demo-agent \
+        --packages-file examples/packages.json \
+        --output-format json \
+        --output-file vulnerability-report.json \
+        --fail-on-vulnerabilities \
+        --severity-threshold high
+      
+      echo "--- Uploading scan results"
+      buildkite-agent artifact upload "vulnerability-report.json"
+    
+    plugins:
+      - StacklokLabs/toolhive#v0.0.1:
+          server: "osv"
+          transport: "sse"
+          proxy-port: 8080
+    
+    artifact_paths:
+      - "vulnerability-report.json"
+    
+    env:
+      ANTHROPIC_API_KEY: # Set this in Buildkite environment variables
+      OSV_SERVER_URL: "http://localhost:8080"
+
+  - label: "📊 Generate Security Report"
+    key: "security-report"
+    depends_on: "vulnerability-scan"
+    command: |
+      echo "--- Downloading vulnerability report"
+      buildkite-agent artifact download "vulnerability-report.json" .
+      
+      echo "--- Generating human-readable report"
+      uv run buildkite-demo-agent \
+        --packages-file examples/packages.json \
+        --output-format text \
+        --output-file security-report.txt \
+        --severity-threshold medium
+      
+      echo "--- Security Report Summary"
+      cat security-report.txt
+      
+      buildkite-agent artifact upload "security-report.txt"
+    
+    plugins:
+      - StacklokLabs/toolhive#v0.0.1:
+          server: "osv"
+          transport: "sse"
+          proxy-port: 8081
+    
+    artifact_paths:
+      - "security-report.txt"
+    
+    env:
+      OSV_SERVER_URL: "http://localhost:8081"
+    
+    allow_dependency_failure: true  # Run even if vulnerability scan fails
+
+  - label: "🚨 Check Critical Vulnerabilities"
+    key: "critical-check"
+    depends_on: "vulnerability-scan"
+    command: |
+      echo "--- Checking for critical vulnerabilities only"
+      uv run buildkite-demo-agent \
+        --packages-file examples/packages.json \
+        --severity-threshold critical \
+        --fail-on-vulnerabilities
+    
+    plugins:
+      - StacklokLabs/toolhive#v0.0.1:
+          server: "osv"
+          transport: "sse"
+          proxy-port: 8082
+    
+    env:
+      OSV_SERVER_URL: "http://localhost:8082"
+    
+    allow_dependency_failure: true
+
+  - label: "🔍 Single Package Scan Example"
+    key: "single-scan"
+    command: |
+      echo "--- Scanning single package"
+      uv run buildkite-demo-agent \
+        --package requests \
+        --ecosystem PyPI \
+        --version 2.25.0 \
+        --output-format text
+    
+    plugins:
+      - StacklokLabs/toolhive#v0.0.1:
+          server: "osv"
+          transport: "sse"
+          proxy-port: 8083
+
+    env:
+      OSV_SERVER_URL: "http://localhost:8083"
+
+  - label: "📋 Vulnerability Details Example"
+    key: "vuln-details"
+    command: |
+      echo "--- Getting vulnerability details"
+      uv run buildkite-demo-agent \
+        --vulnerability-id GHSA-9hjg-9r4m-mvj7 \
+        --output-format text
+    
+    plugins:
+      - StacklokLabs/toolhive#v0.0.1:
+          server: "osv"
+          transport: "sse"
+          proxy-port: 8084
+
+    env:
+      OSV_SERVER_URL: "http://localhost:8084"
+
+  - label: "🔄 Batch Scan with Command Line"
+    key: "batch-scan-cli"
+    command: |
+      echo "--- Scanning multiple packages via CLI"
+      uv run buildkite-demo-agent \
+        --packages "requests:PyPI:2.25.0,lodash:npm:4.17.20,github.com/gin-gonic/gin:Go:v1.7.0" \
+        --output-format text \
+        --severity-threshold medium
+    
+    plugins:
+      - StacklokLabs/toolhive#v0.0.1:
+          server: "osv"
+          transport: "sse"
+          proxy-port: 8085
+    
+    env:
+      OSV_SERVER_URL: "http://localhost:8085"
